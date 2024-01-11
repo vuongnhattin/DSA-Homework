@@ -4,20 +4,24 @@
 
 using namespace std;
 
+// Structure representing an object with an ID, order, and priority
 struct Object {
     string id;
     int order;
     int priority;
 };
 
+// Structure representing a priority queue implemented using a min-heap
 struct PriorityQueueHeap {
     vector<Object> arr;
 };
 
+// Function to check if the priority queue is empty
 bool isEmpty(const PriorityQueueHeap& pq) {
     return pq.arr.empty();
 }
 
+// Function to maintain the heap property while moving an element up the heap
 void heapifyUp(vector<Object>& arr, int index) {
     while (index > 0) {
         int parentIndex = (index - 1) / 2;
@@ -30,6 +34,7 @@ void heapifyUp(vector<Object>& arr, int index) {
     }
 }
 
+// Function to maintain the heap property while moving an element down the heap
 void heapifyDown(vector<Object>& arr, int index) {
     int size = arr.size();
     while (true) {
@@ -54,11 +59,13 @@ void heapifyDown(vector<Object>& arr, int index) {
     }
 }
 
+// Function to insert an object into the priority queue
 void insert(PriorityQueueHeap& pq, const Object& obj) {
     pq.arr.push_back(obj);
     heapifyUp(pq.arr, pq.arr.size() - 1);
 }
 
+// Function to extract the object with the highest priority from the priority queue
 Object extract(PriorityQueueHeap& pq) {
     if (isEmpty(pq)) {
         cerr << "Error: Priority queue is empty." << endl;
@@ -74,6 +81,7 @@ Object extract(PriorityQueueHeap& pq) {
     return result;
 }
 
+// Function to remove an object with a given ID from the priority queue
 void remove(PriorityQueueHeap& pq, const string& objectId) {
     int index = -1;
     for (int i = 0; i < pq.arr.size(); ++i) {
@@ -93,6 +101,7 @@ void remove(PriorityQueueHeap& pq, const string& objectId) {
     (void)extract(pq);
 }
 
+// Function to change the priority of an object with a given ID
 void changePriority(PriorityQueueHeap& pq, const string& objectId, int newPriority) {
     int index = -1;
     for (int i = 0; i < pq.arr.size(); ++i) {
@@ -117,6 +126,7 @@ void changePriority(PriorityQueueHeap& pq, const string& objectId, int newPriori
     }
 }
 
+// Main function demonstrating the usage of the priority queue
 int main() {
     // Example usage
     PriorityQueueHeap priorityQueue;

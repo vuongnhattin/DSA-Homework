@@ -3,31 +3,38 @@
 
 using namespace std;
 
+// Structure representing an object with an ID, order, and priority
 struct Object {
     string id;
     int order;
     int priority;
 };
 
+// Structure representing a node in a singly linked list
 struct Node {
     Object key;
     Node* next;
 };
 
+// Structure representing a priority queue implemented using a linked list
 struct PriorityQueueList {
-    Node* front;
+    Node* front;  // Pointer to the front (head) of the linked list
 
+    // Constructor to initialize an empty priority queue
     PriorityQueueList() : front(nullptr) {}
 };
 
+// Function to check if the priority queue is empty
 bool isEmpty(const PriorityQueueList& pq) {
     return pq.front == nullptr;
 }
 
+// Function to insert an object into the priority queue based on its priority
 void insert(PriorityQueueList& pq, const Object& obj) {
     Node* newNode = new Node{obj, nullptr};
 
     if (isEmpty(pq)) {
+        // If the priority queue is empty, insert the new node at the front
         pq.front = newNode;
         return;
     }
@@ -52,6 +59,7 @@ void insert(PriorityQueueList& pq, const Object& obj) {
     }
 }
 
+// Function to extract the object with the highest priority from the priority queue
 Object extract(PriorityQueueList& pq) {
     if (isEmpty(pq)) {
         cerr << "Error: Priority queue is empty." << endl;
@@ -59,14 +67,17 @@ Object extract(PriorityQueueList& pq) {
         return Object{"", 0, 0};
     }
 
+    // Extract the object from the front of the linked list
     Object result = pq.front->key;
     Node* temp = pq.front;
     pq.front = pq.front->next;
 
+    // Deallocate memory for the extracted node
     delete temp;
     return result;
 }
 
+// Function to remove an object with a given ID from the priority queue
 void remove(PriorityQueueList& pq, const string& objectId) {
     if (isEmpty(pq)) {
         cerr << "Error: Priority queue is empty." << endl;
@@ -99,6 +110,7 @@ void remove(PriorityQueueList& pq, const string& objectId) {
     delete current;
 }
 
+// Function to change the priority of an object with a given ID
 void changePriority(PriorityQueueList& pq, const string& objectId, int newPriority) {
     if (isEmpty(pq)) {
         cerr << "Error: Priority queue is empty." << endl;
@@ -126,6 +138,7 @@ void changePriority(PriorityQueueList& pq, const string& objectId, int newPriori
     insert(pq, newObj);
 }
 
+// Main function demonstrating the usage of the priority queue
 int main() {
     // Example usage
     PriorityQueueList priorityQueue;

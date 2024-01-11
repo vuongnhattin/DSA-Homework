@@ -2,22 +2,25 @@
 #include <fstream>
 #include <vector>
 
+// Forward declaration of Leader and Trailer structures
 typedef struct Leader* lref;
 typedef struct Trailer* tref;
 
+// Structure representing a Leader node
 struct Leader {
-    int key;
-    int count;
-    lref next;
-    tref trails;
+    int key;        // Key of the leader
+    int count;      // Number of incoming precedences
+    lref next;      // Pointer to the next leader node in the list
+    tref trails;    // Pointer to the list of trailers
 };
 
+// Structure representing a Trailer node
 struct Trailer {
-    lref id;
-    tref next;
+    lref id;        // Pointer to the leader node
+    tref next;      // Pointer to the next trailer node in the list
 };
 
-// Find Leader with key x, if not exist yet then add to the end of Leader list
+// Function to find the leader with key x; if not exist yet, add to the end of the leader list
 lref findLeader(lref& head, lref& tail, int x) {
     lref p = head;
 
@@ -31,15 +34,16 @@ lref findLeader(lref& head, lref& tail, int x) {
         tail = new Leader;
 
         p->count = 0;
-        p->trails = NULL;
+        p->trails = nullptr;
         p->next = tail;
     }
 
     return p;
 }
 
+// Function to split leaders with no precedences from the leader list
 void splitLeaderWithNoPrecedence(lref& head, lref& tail) {
-	lref p = head;
+    lref p = head;
     head = nullptr;
 
     while (p != tail) {
@@ -54,7 +58,7 @@ void splitLeaderWithNoPrecedence(lref& head, lref& tail) {
     }
 }
 
-// Add new order x < y
+// Function to add a new order x < y
 void addOrder(lref& head, lref& tail, int x, int y) {
     lref xNode = findLeader(head, tail, x);
     lref yNode = findLeader(head, tail, y);
@@ -62,22 +66,24 @@ void addOrder(lref& head, lref& tail, int x, int y) {
     tref xTrail = new Trailer{ yNode, xNode->trails };
     xNode->trails = xTrail;
 
-    //increase the number of precedences
+    // Increase the number of precedences
     yNode->count++;
 }
 
+// Function to create leaders from pairs of orders
 void createLeadersFromPairs(lref& head, lref& tail, std::vector<std::pair<int, int>> orders) {
-	head = new Leader{ -1, 0, nullptr, nullptr };
-	tail = head;
+    head = new Leader{ -1, 0, nullptr, nullptr };
+    tail = head;
 
-	for (int i = 0; i < orders.size(); i++) {
+    for (int i = 0; i < orders.size(); i++) {
         addOrder(head, tail, orders[i].first, orders[i].second);
     }
 }
 
+// Function to perform topological sort based on the given orders
 void topoSort(std::vector<std::pair<int, int>> orders) {
-	lref head, tail;
-	createLeadersFromPairs(head, tail, orders);
+    lref head, tail;
+    createLeadersFromPairs(head, tail, orders);
 
     splitLeaderWithNoPrecedence(head, tail);
 
@@ -104,6 +110,7 @@ void topoSort(std::vector<std::pair<int, int>> orders) {
     }
 }
 
+// Function to parse orders from a file and return a vector of pairs
 std::vector<std::pair<int, int>> parseFile(std::string fileName) {
     std::vector<std::pair<int, int>> orders;
 
@@ -119,7 +126,7 @@ std::vector<std::pair<int, int>> parseFile(std::string fileName) {
         if (inFile.eof()) {
             break;
         }
-        
+
         orders.push_back(p);
     }
 
@@ -128,9 +135,12 @@ std::vector<std::pair<int, int>> parseFile(std::string fileName) {
     return orders;
 }
 
+// Main function
 int main() {
+    // Parse orders from the input file
     std::vector<std::pair<int, int>> orders = parseFile("input.txt");
 
+    // Perform topological sort and print the result
     topoSort(orders);
 
     return 0;
